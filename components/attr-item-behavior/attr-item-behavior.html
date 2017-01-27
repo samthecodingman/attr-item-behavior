@@ -1,0 +1,130 @@
+<!--
+@license
+Copyright (c) 2017 Samuel Jones. All rights reserved.
+Released under the MIT license. http://samthecodingman.github.io/MIT_LICENSE.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<script>
+
+		/**
+     * `Polymer.AttrItemBehavior` defines the properties and functions that
+		 * reflect the properties of the object specified as the `attr-item`
+		 * attribute to this element.
+		 *
+		 * At this time, all public properties of the `attrItem` object will be
+		 * reflected to this element (a public property is one not prefixed with
+		 * an underscore). If the propery has no definition, it will be defined as
+		 * one that notifies and is reflected as an attribute on this element.
+     *
+     * @demo demo/index.html
+     * @polymerBehavior
+     */
+	Polymer.AttrItemBehavior = {
+		properties: {
+			/**
+			 * The object that will have its properties reflected as attributes of
+			 * this element. Properties prefixed with an underscore will not be
+			 * reflected.
+			 */
+			attrItem: {
+				type: Object,
+				value: function() {
+					return {};
+				},
+				reflectToAttribute: true,
+				notify: true,
+				observer: '_attrItemChanged'
+			}
+		},
+
+		observers: [
+			'_attrItemValueChanged(attrItem.*)'
+		],
+
+		/**
+     * Returns the property keys for the given object that aren't prefixed with an underscore.
+     * @param {Object} obj The object to extract keys from
+		 * @return {Array} the array of keys, may be empty
+     */
+		_getObjectPublicKeys: function(obj) {
+			return Object.keys(obj).filter(function(e) { return e.charAt(0) != '_'});
+		},
+
+		/**
+		 * Observes changes in `attr-item` and reflects them to the attributes on
+		 * this element. New properties are registered to this element with the
+		 * generic `Object` type and set to notify changes.
+		 * @param {Object} item The object to sync, usually the object given as `attr-item`
+		 */
+		_attrItemChanged: function(item) {
+			var keys = this._getObjectPublicKeys(item);
+			var propDefs = {};
+			var funcDefs = {};
+			keys.forEach(function(key) {
+				this._defineAttrItemProp(funcDefs, propDefs, key, item[key]);
+			}, this);
+			this._commitAttrItemProps(funcDefs, propDefs);
+			keys.forEach(function(key) { this.set(key, item[key]); }, this); // Clone changes from item
+		},
+
+		/**
+		 * Handles changes in `attr-item`'s properties and reflects them to the
+		 * attributes on this element. New properties are registered to this element
+		 * with the generic `Object` type and set to notify changes.
+		 * @param {Object} cr The change record for the observed change
+		 */
+		_attrItemValueChanged: function(cr) {
+			parts = this._getPathParts(cr.path);
+			// ignore parent-only updates or private subkeys
+			if (parts.length < 2 || parts[1].charAt(0) == '_') { return; }
+			var propDefs = {};
+			var funcDefs = {};
+			this._defineAttrItemProp(funcDefs, propDefs, parts[1], cr.value);
+			this._commitAttrItemProps(funcDefs, propDefs);
+			this.set(parts[1], cr.value); // Clone changes from item
+		},
+
+		/**
+		 * Constructs the attribute definition for the specified property named `key`
+		 * @param {Object} funcs [reference] object that contains observer functions mapped to keys
+		 * @param {Object} props [reference] object that contains property definitions mapped to keys
+		 * @param {Object} key the property name
+		 * @param {Object} value the default property value
+		 */
+		_defineAttrItemProp: function(funcs, props, key, value) {
+			if (!this.hasOwnProperty(key)) {
+				funcs[key] = {
+					name: '_attrItemValue_' + key + 'Changed',
+					func: function(v) { this.set('attrItem.' + key, v); } // Clone changes from element
+				};
+				props[key] = {
+					type: Object,
+					value: value,
+					reflectToAttribute: true,
+					notify: true,
+					observer: funcs[key].name
+				};
+			}
+		},
+
+		/**
+		 * Commits the given definitions to this element. If `props` is empty,
+		 * this function does nothing.
+		 * @param {Object} funcs object that contains observer functions mapped to keys
+		 * @param {Object} props object that contains property definitions mapped to keys
+		 */
+		_commitAttrItemProps: function(funcDefs, propDefs) {
+			var newDefKeys = propDefs ? Object.keys(propDefs) : [];
+			if (newDefKeys.length < 1) return; // no new keys
+			// Define observer functions, prior to adding property effects.
+			newDefKeys.forEach(function(key) {
+				this[funcDefs[key].name] = funcDefs[key].func;
+			}, this);
+			// Update property effects and recalculate bindings.
+			this._addPropertyEffects(propDefs);
+			this._prepBindings();
+		}
+
+	};
+</script>

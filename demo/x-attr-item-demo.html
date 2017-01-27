@@ -1,0 +1,69 @@
+<!--
+@license
+Copyright (c) 2017 Samuel Jones. All rights reserved.
+Released under the MIT license. http://samthecodingman.github.io/MIT_LICENSE.txt
+-->
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="attr-demo-child.html">
+
+<!--
+`x-attr-item-demo`
+Demonstration of `Polymer.AttrItemBehavior` reflecting the properties of an
+object passed as an attribute to attributes on the same element.
+
+@demo demo/index.html
+-->
+
+<dom-module id="x-attr-item-demo">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+
+      .boxname {
+        font-weight:700;
+        font-style:italic;
+        margin-top:-10px;
+      }
+
+      .example {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 10px;
+      }
+
+      .example-fields {
+        font-style:italic;
+      }
+
+      .input-desc {
+        font-size: 12px;
+      }
+    </style>
+    <p class="boxname">&lt;parent element&gt;</p>
+    <p>In this parent element, the object is defined (with default values) to pass to the child element.</p>
+    <p class="input-desc">Change the below values to update the properties on the object passed to the child element.</p>
+    <paper-input label="your name" value="{{testItem.name}}"></paper-input>
+    <paper-input label="your value" value="{{testItem.value}}"></paper-input>
+    <br />
+    <attr-demo-child attr-item="[[testItem]]"></attr-demo-child>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'x-attr-item-demo',
+      properties: {
+        testItem: {
+          type: Object,
+          value: function() {
+            return {'name': 'you', 'value': 'something'};
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,69 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../attr-item-behavior.html">
+
+
+<!--
+`attr-demo-child`
+An example element that implements `Polymer.AttrItemBehavior`
+
+In the parent element, this element would be called as shown below. This would
+bind the properties of `someobject` to this element's properties and attributes.
+```
+<attr-demo-child attr-item={{someobject}}></attr-demo-child>
+```
+
+Most of this element is used to demonstrate the functionality of this behavior
+in conjunction with `x-attr-item-demo`. Apart from the relevant html import,
+the only significant line in this demo is the behavior declaration.
+```
+behaviors: [ Polymer.AttrItemBehavior ]
+```
+
+@demo demo/index.html
+-->
+
+<dom-module id="attr-demo-child">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+
+      .boxname {
+        font-weight:700;
+        font-style:italic;
+        margin-top:-10px;
+      }
+
+      .example {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 10px;
+      }
+
+      .example-fields {
+        font-style:italic;
+      }
+
+      .input-desc {
+        font-size: 12px;
+      }
+    </style>
+    <p class="boxname">&lt;child element&gt;</p>
+    <p>This element has the object from the parent passed in as &quot;attr-item&quot;</p>
+    <p class="example"><span class="boxname">Example output:</span><br />Hello <span class="example-fields">[[name]]</span>, apparently you have <span class="example-fields">[[value]]</span>.</p>
+    <p class="input-desc">Change the below values to update the attached object and the attributes on this element.</p>
+    <paper-input label="your name" value="{{name}}"></paper-input>
+    <paper-input label="your value" value="{{value}}"></paper-input>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'attr-demo-child',
+
+      behaviors: [Polymer.AttrItemBehavior],
+    });
+  </script>
+</dom-module>

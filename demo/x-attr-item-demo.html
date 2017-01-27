@@ -49,6 +49,10 @@ object passed as an attribute to attributes on the same element.
     <paper-input label="your name" value="{{testItem.name}}"></paper-input>
     <paper-input label="your value" value="{{testItem.value}}"></paper-input>
     <br />
+    <p>Two-way data binding:</p>
+    <attr-demo-child attr-item="{{testItem}}"></attr-demo-child>
+    <br />
+    <p>One-way data binding:</p>
     <attr-demo-child attr-item="[[testItem]]"></attr-demo-child>
   </template>
 

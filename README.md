@@ -11,7 +11,7 @@ properties of the object specified as the `attr-item` attribute to this element.
 
 At this time, all public properties of the `attrItem` object will be
 reflected to this element (a public property is one not prefixed with
-an underscore). If the propery has no definition, it will be defined as
+an underscore). If the property has no definition, it will be defined as
 one that notifies and is reflected as an attribute on this element.
 
 **Dependencies:** This element is only dependent on Polymer itself when deployed.
@@ -30,6 +30,7 @@ element.
 <!-- or -->
 <attr-demo attr-item="[[someObject]]"></attr-demo>
 ```
+In your properties object on the parent, set `someObject = {'value':'SOMEVALUE'}`.
 
 Custom Element Definition:
 ```html
